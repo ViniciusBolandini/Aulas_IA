@@ -1,15 +1,24 @@
-from greedy import greedy_best_first_search
-from a_star import a_star_search
-from graphs import graph_ag
-from heuristics import heuristic_ag
+# Importa os dados e os algoritmos dos outros ficheiros.
+from graphs import romania_graph
+from heuristics import romania_heuristics
+from greedy import busca_gulosa
+from a_star import busca_a_estrela
 
-def run_ag():
-    start, goal = 'A', 'G'
-    print(f'=== A-G GRAPH (start: {start} -> goal: {goal}) ===')
-    g_path, g_order, g_cost = greedy_best_first_search(graph_ag, start, goal, heuristic_ag)
-    print('[Greedy] path:', g_path, 'explored:', g_order, 'cost:', g_cost)
-    a_path, a_order, a_cost = a_star_search(graph_ag, start, goal, heuristic_ag)
-    print('[A*]     path:', a_path, 'explored:', a_order, 'cost:', a_cost)
+def run_romania_search():
+    inicio, objetivo = 'Arad', 'Bucharest'
+    
+    print(f"=== ROMANIA GRAPH (start: {inicio} -> goal: {objetivo}) ===")
+    
+    # --- Executa e exibe o resultado da Busca Gulosa ---
+    g_path, g_order, g_cost = busca_gulosa(romania_graph, romania_heuristics, inicio, objetivo)
+    print(f"[Greedy] path: {' -> '.join(g_path)} | cost: {g_cost} Km")
+    print(f"         explored: {' -> '.join(g_order)}")
+    
+    # --- Executa e exibe o resultado da Busca A* ---
+    a_path, a_order, a_cost = busca_a_estrela(romania_graph, romania_heuristics, inicio, objetivo)
+    print(f"[A*]     path: {' -> '.join(a_path)} | cost: {a_cost} Km")
+    print(f"         explored: {' -> '.join(a_order)}")
 
-if __name__ == '__main__':
-    run_ag()
+if __name__ == "__main__":
+    run_romania_search()
+
