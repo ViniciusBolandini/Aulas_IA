@@ -1,35 +1,34 @@
-from __future__ import annotations
-from typing import Callable, Dict, Set
-from utils import PriorityQueue, reconstruct_path, path_cost, Graph
+from utils import PriorityQueue, reconstruct_path, path_cost
 
-def greedy_best_first_search(graph: Graph, start: str, goal: str, h: Dict[str, float] | Callable[[str], float]):
-    if isinstance(h, dict):
-        def h_fn(n: str) -> float: return float(h.get(n, float("inf")))
-    else:
-        h_fn = h
+def busca_gulosa(mapa, heuristicas, inicio, objetivo):
+    """
+    Implementa o algoritmo de Busca Gulosa (Greedy Best-First Search).
+    """
+    fila_prioridade = PriorityQueue()
+    fila_prioridade.push(heuristicas[inicio], inicio)
+    
+    predecessor = {inicio: None}
+    cidades_visitadas = set()
+    ordem_expansao = []
 
-    frontier = PriorityQueue()
-    frontier.push(h_fn(start), start)
-    came_from: Dict[str, str] = {}
-    visited: Set[str] = set()
-    explored_order = []
-
-    while frontier:
-        current = frontier.pop()
-        explored_order.append(current)
-
-        if current == goal:
-            path = reconstruct_path(came_from, current)
-            return path, explored_order, path_cost(graph, path)
-
-        if current in visited:
+    while fila_prioridade:
+        cidade_atual = fila_prioridade.pop()
+        
+        if cidade_atual in cidades_visitadas:
             continue
-        visited.add(current)
+        
+        cidades_visitadas.add(cidade_atual)
+        ordem_expansao.append(cidade_atual)
 
-        for neighbor in graph.get(current, {}):
-            if neighbor not in visited:
-                frontier.push(h_fn(neighbor), neighbor)
-                if neighbor not in came_from:
-                    came_from[neighbor] = current
+        if cidade_atual == objetivo:
+            caminho = reconstruct_path(predecessor, cidade_atual)
+            custo = path_cost(mapa, caminho)
+            return caminho, ordem_expansao, custo
 
-    return None, explored_order, None
+        for vizinho in mapa.get(cidade_atual, {}):
+            if vizinho not in predecessor:
+                predecessor[vizinho] = cidade_atual
+                fila_prioridade.push(heuristicas[vizinho], vizinho)
+
+    return None, ordem_expansao, None
+
